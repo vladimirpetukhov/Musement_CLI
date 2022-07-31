@@ -35,7 +35,7 @@ public class Program
 
         try
         {
-            var cities = tuiApi.GetHome().Result;
+            var cities = tuiApi.GetSities().Result;
 
             foreach (var city in cities)
             {

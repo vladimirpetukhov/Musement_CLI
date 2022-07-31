@@ -15,8 +15,11 @@
         {
         }
 
-        public Task<IEnumerable<City>> GetHome()
+        public Task<IEnumerable<City>> GetSities()
             => _httpClient.GetFromJsonAsync<IEnumerable<City>>(CITIES);
-        
+
+        public Task<City> GetSities(int id)
+            => _httpClient.GetFromJsonAsync<City>(String.Format(CITY_BY_ID,id));
+
     }
 }

@@ -1,9 +1,14 @@
+using App.Infrastrucure;
+using App.Services;
+using App.Core.Models;
+using App.Services.Http;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddAppServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -16,28 +21,40 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
+app.MapGet("/cities", async (TUIClient client) =>
 {
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+    IEnumerable<City> cities = default;
+    try
+    {
+        cities = await client.GetSities();
+    }
+    catch (global::System.Exception)
+    {
+        Results.BadRequest();
+    }
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateTime.Now.AddDays(index),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+    return cities;
+}).Produces(400).Produces(200);
+
+app.MapGet("/cities/{id}", async (int id, TUIClient client) =>
+ {
+     City city = default;
+     try
+     {
+         city = await client.GetSities(id);
+
+         if (city == null)
+         {
+             Results.NotFound(id);
+         }
+     }
+     catch (global::System.Exception)
+     {
+         Results.BadRequest();
+     }
+
+     return city;
+ }).Produces(400).Produces(404).Produces(200);
 
 app.Run();
 
-record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

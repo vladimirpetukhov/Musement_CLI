@@ -10,5 +10,6 @@ namespace App.Core
     {
         public const string TUI_BASE_URL = "https://api.musement.com/";
         public const string CITIES = "/api/v3/cities";
+        public const string CITY_BY_ID = "/api/v3/cities/{0}";
     }
 }
