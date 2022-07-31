@@ -1,0 +1,29 @@
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
+#For more information, please see https://aka.ms/containercompat
+
+FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
+WORKDIR /app
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["App.Main/App.Main.csproj", "App.Main/"]
+COPY ["App.Infrastrucure/App.Infrastrucure.csproj", "App.Infrastrucure/"]
+COPY ["App.Services/App.Services.csproj", "App.Services/"]
+COPY ["App.Core/App.Core.csproj", "App.Core/"]
+RUN dotnet restore "App.Main/App.Main.csproj"
+COPY . .
+WORKDIR "/src/App.Main"
+RUN dotnet pack
+RUN ls -a
+RUN dotnet tool install --global --add-source ./nupkg app.main
+RUN dotnet build "App.Main.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "App.Main.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["App.Main.exe"]
