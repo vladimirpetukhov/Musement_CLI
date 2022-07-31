@@ -16,7 +16,7 @@ public class Program
 
     public static Dictionary<(string, int), (string, string)> entries = new Dictionary<(string, int), (string, string)>();
 
-    public static async Task Main()
+    public static async Task Main(string[] args)
     {
 
         ServiceCollection serviceCollection = new ServiceCollection();
@@ -69,9 +69,36 @@ public class Program
             do
             {
                 cki = Console.ReadKey();
-                // do something with each key press until escape key is pressed
-            } while (cki.Key != ConsoleKey.Escape);
+            Start:
+                var citi = args.AsQueryable().FirstOrDefault();
+                if (citi == null)
+                {
+                    Console.WriteLine("City name: ");
+                    citi = Console.ReadLine()!.Trim();
+                }
+
+                if (entries.Keys.Any(k => k.Item1 == citi))
+                {
+                    var c = entries.Keys.FirstOrDefault(k => k.Item1 == citi);
+                    var val = entries[c];
+                    Console.Out.WriteLine($"Processed city {c.Item1} | {val.Item1} - {val.Item2}");
+
+                    goto Start;
+                }
+                else
+                {
+                    Console.Out.WriteLine("========== Not Found! ==========");
+                    goto Start;
+                }
+            }
+            // do something with each key press until escape key is pressed
+            while (cki.Key != ConsoleKey.Escape);
         }
+
+
+
+
+
 
     }
 
