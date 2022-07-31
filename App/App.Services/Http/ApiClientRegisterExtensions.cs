@@ -2,17 +2,18 @@
 {
     #region usings
     using Microsoft.Extensions.DependencyInjection;
+    using System.Net.Http;
     #endregion
 
-    public class ApiClientRegisterExtensions
+    public static class ApiClientRegisterExtensions
     {
-        public static IServiceCollection AddApiClient(
+        public static IServiceCollection  AddApiClient<T>(
             this IServiceCollection services,
-            Action<HttpClient> clientConfiguration)
+            Action<HttpClient> clientConfiguration) where T : class
         {
             services.AddTransient<HttpContextMiddleware>();
-
-            services.AddHttpClient<TUIClient>(clientConfiguration)
+            
+            services.AddHttpClient<T>(clientConfiguration)
                 .AddHttpMessageHandler<HttpContextMiddleware>();
 
             return services;

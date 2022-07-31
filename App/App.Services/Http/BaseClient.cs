@@ -8,11 +8,13 @@ namespace App.Services.Http
 {
     public abstract class BaseClient
     {
-        private readonly HttpClient _httpClient;
+        protected HttpClient _httpClient;
 
         public BaseClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
+
+        protected string Key { get; set; }  
     }
 }

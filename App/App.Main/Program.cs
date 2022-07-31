@@ -1,41 +1,63 @@
 ﻿#region usings
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Serilog;
+using App.Services.Http;
+using App.Infrastrucure;
+using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
+using App.Core.Models;
+using System.Diagnostics;
 #endregion
 
-class Program
+public class Program
 {
     public static IConfigurationRoot configuration;
 
-    static void Main()
-    {
-        // Initialize serilog logger
-        Log.Logger = new LoggerConfiguration()
-             .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
-             .MinimumLevel.Debug()
-             .Enrich.FromLogContext()
-             .CreateLogger();
+    public static Dictionary<(string, int), (string, string)> entries = new Dictionary<(string, int), (string, string)>();
 
-        // Create service collection
-        Log.Information("Creating service collection");
+    public static async Task Main()
+    {
+
         ServiceCollection serviceCollection = new ServiceCollection();
-        ConfigureServices(serviceCollection);
+        serviceCollection.AddAppServices(configuration);
 
         // Create service provider
-        Log.Information("Building service provider");
         IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
-        // Print connection string to demonstrate configuration object is populated
-        Console.WriteLine(configuration.GetSection("TUI_API:BASE_URL").Value);
+        // Create service configuration
+        var config = serviceProvider.GetService<IConfigurationRoot>();
 
         ConsoleKeyInfo cki;
 
+        var tuiApi = serviceProvider.GetService<TUIClient>();
+        var weatherApi = serviceProvider.GetService<WeatherClient>();
+
         try
         {
-            Log.Information("Starting service");
-            Log.Information("Ending service");
+            var cities = tuiApi.GetHome().Result;
+
+            foreach (var city in cities)
+            {
+                var url = String.Format(config.GetSection("WEATHER_API:City").Value, "London");
+                var weather = weatherApi.GetCityWeather(url).Result;
+                JObject jsonObject = JObject.Parse(weather);
+
+                if (!entries.ContainsKey((city.Name, city.Id)))
+                {
+                    Log.Information(city.Name, city.Id);
+                    entries[(city.Name, city.Id)] = new();
+                }
+
+                var today = jsonObject.SelectToken("current.condition.text").ToString();
+                var tomorrow = jsonObject.SelectToken("forecast.forecastday").First().SelectToken("day.condition.text").ToString();
+
+                entries[(city.Name, city.Id)] = (today, tomorrow);
+
+                Console.Out.WriteLine($"Processed city {city.Name} | {today} - {tomorrow}");
+            }
+
+
         }
         catch (Exception ex)
         {
@@ -53,23 +75,5 @@ class Program
 
     }
 
-    private static void ConfigureServices(IServiceCollection serviceCollection)
-    {
-        // Add logging
-        serviceCollection.AddSingleton(LoggerFactory.Create(builder =>
-        {
-            builder
-                .AddSerilog(dispose: true);
-        }));
 
-        serviceCollection.AddLogging();
-
-        configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetParent(AppContext.BaseDirectory).FullName)
-            .AddJsonFile("appsettings.json", false)
-            .Build();
-
-        // Add access to generic IConfigurationRoot
-        serviceCollection.AddSingleton<IConfigurationRoot>(configuration);
-    }
 }
