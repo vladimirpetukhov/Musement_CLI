@@ -39,7 +39,7 @@ public class Program
 
             foreach (var city in cities)
             {
-                var url = String.Format(config.GetSection("WEATHER_API:City").Value, "London");
+                var url = String.Format(config.GetSection("WEATHER_API:City").Value, city.Name);
                 var weather = weatherApi.GetCityWeather(url).Result;
                 JObject jsonObject = JObject.Parse(weather);
 
@@ -48,13 +48,13 @@ public class Program
                     Log.Information(city.Name, city.Id);
                     entries[(city.Name, city.Id)] = new();
                 }
+                var forecastday = jsonObject.SelectToken("forecast.forecastday").ToList();
+                var first = forecastday[0]["day"]["condition"]["text"];
+                var second = forecastday[1]["day"]["condition"]["text"];
 
-                var today = jsonObject.SelectToken("current.condition.text").ToString();
-                var tomorrow = jsonObject.SelectToken("forecast.forecastday").First().SelectToken("day.condition.text").ToString();
+                entries[(city.Name, city.Id)] = (first.ToString(), second.ToString());
 
-                entries[(city.Name, city.Id)] = (today, tomorrow);
-
-                Console.Out.WriteLine($"Processed city {city.Name} | {today} - {tomorrow}");
+                Console.Out.WriteLine($"Processed city {city.Name} | {first} - {second}");
             }
 
 
