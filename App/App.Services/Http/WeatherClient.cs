@@ -20,5 +20,11 @@ namespace App.Services.Http
         {
             return _httpClient.GetStringAsync(url);
         }
+
+        public Task<string> GetCityWeatherDate(string url)
+        {
+            return _httpClient.GetStringAsync(url);
+        }
+
     }
 }
