@@ -14,7 +14,7 @@ jobs:
   # This workflow contains a single job called "build"
   build-windows:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     defaults:
       run:
         working-directory: ./App
@@ -29,6 +29,7 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: microsoft/setup-msbuild@v1
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
@@ -45,14 +46,7 @@ jobs:
       - name: Build Api 
         run: |
           cd App.API
-          dotnet build App.API.csproj --no-restore
-          #  dotnet test App.API.csproj --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
-       
-      - name: Build Main 
-        run: |
-          cd App.Main
-          dotnet build App.Main.csproj --no-restore
-          #  dotnet test App.Main.csproj --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
+          dotnet build App.sln       
 
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
