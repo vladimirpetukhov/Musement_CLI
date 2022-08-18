@@ -39,6 +39,8 @@ jobs:
 
       - name: Get Current Dir
         run: echo ${pwd}
+      - name: Get Current 
+        run: echo ${ls}
 
       - name: Restore NuGet packages
         run: nuget restore App.sln
