@@ -15,9 +15,6 @@ jobs:
   build-windows:
     # The type of runner that the job will run on
     runs-on: windows-latest
-    defaults:
-      run:
-        working-directory: ./App
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -36,9 +33,12 @@ jobs:
           java-version: '11'
 
       - name: Restore NuGet packages
-        run: nuget restore App.sln
+        run: |
+          cd App
+          nuget restore App.sln
           
       - name: Begin Sonar scan
+        working-directory: ./App
         run: |
           dotnet tool install --global dotnet-sonarscanner
           dotnet sonarscanner begin /o:vladimirpetukhov /k:vladimirpetukhov_Musement_CLI /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url=https://sonarcloud.io
@@ -56,4 +56,5 @@ jobs:
           #  dotnet test App.Main.csproj --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
 
       - name: End Sonar scan
+        working-directory: ./App
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
