@@ -32,8 +32,13 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
           
+
+      - name: Get Current Dir
+        run: echo ${pwd}
+
       - name: Restore NuGet packages
-        run: nuget restore App.sln
+        run: echo ${pwd}
+        run: nuget restore ./App.sln
           
       - name: Begin Sonar scan
         run: |
