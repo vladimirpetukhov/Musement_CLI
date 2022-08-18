@@ -9,6 +9,7 @@
 		<ToolCommandName>weather</ToolCommandName>
 		<PackageOutputPath>./nupkg</PackageOutputPath>
 		<DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+		<ProjectGuid>{fc2f0da6-ddfe-67b2-8dae-eb292f554361}</ProjectGuid>
 	</PropertyGroup>
 
 	<ItemGroup>
