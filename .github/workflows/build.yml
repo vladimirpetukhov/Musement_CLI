@@ -15,6 +15,9 @@ jobs:
   build-windows:
     # The type of runner that the job will run on
     runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./App
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -31,13 +34,14 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '11'
-          
+
+
 
       - name: Get Current Dir
         run: echo ${pwd}
 
       - name: Restore NuGet packages
-        run: nuget restore ./App.sln
+        run: nuget restore App.sln
           
       - name: Begin Sonar scan
         run: |
