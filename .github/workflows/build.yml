@@ -45,13 +45,13 @@ jobs:
      
       - name: Build Api 
         run: |
-          cd App.API
+          cd ./App/App.API
           dotnet build App.API.csproj --no-restore
           #  dotnet test App.API.csproj --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
        
       - name: Build Main 
         run: |
-          cd App.Main
+          cd ./App/App.Main
           dotnet build App.Main.csproj --no-restore
           #  dotnet test App.Main.csproj --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
 
