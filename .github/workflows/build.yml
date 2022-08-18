@@ -27,6 +27,7 @@ jobs:
           # Disabling shallow clone is recommended for improving relevancy of reporting
           fetch-depth: 0
       - uses: actions/setup-dotnet@v1
+      - uses: sonarsource/sonarcloud-github-action@main
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - uses: microsoft/setup-msbuild@v1
@@ -44,9 +45,7 @@ jobs:
           dotnet sonarscanner begin /o:vladimirpetukhov /k:vladimirpetukhov_Musement_CLI /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url=https://sonarcloud.io
      
       - name: Build Api 
-        run: |
-          cd App.API
-          dotnet build App.sln       
+        run: dotnet build App.sln       
 
       - name: End Sonar scan
         run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }}
