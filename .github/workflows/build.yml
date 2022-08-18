@@ -14,7 +14,7 @@ jobs:
   # This workflow contains a single job called "build"
   build-windows:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ./App
@@ -29,7 +29,6 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - uses: microsoft/setup-msbuild@v1
       - uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
