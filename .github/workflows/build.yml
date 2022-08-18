@@ -49,13 +49,13 @@ jobs:
           dotnet sonarscanner begin /o:vladimirpetukhov /k:vladimirpetukhov_Musement_CLI /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url=https://sonarcloud.io
      
       - name: Build Api 
-        working-directory: ./App.API
+        working-directory: App.API
         run: |
           dotnet build App.API.csproj --no-restore
           #  dotnet test App.API.csproj --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
        
       - name: Build Main 
-        working-directory: ./App.Main
+        working-directory: App.Main
         run: |
           dotnet build App.Main.csproj --no-restore
           #  dotnet test App.Main.csproj --no-build --no-restore --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=opencover
