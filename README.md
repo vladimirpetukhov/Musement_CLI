@@ -2,6 +2,9 @@
 
 # TUI Musement_CLI
 
+## Author
+Vladimir Petukhov
+
 #### Pack the project
 cd ./App/App.Main
 dotnet pack
