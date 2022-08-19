@@ -49,5 +49,4 @@ jobs:
 
       - name: End Sonar scan
         run: |
-         cd ./App
           dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }} 
