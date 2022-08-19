@@ -40,11 +40,14 @@ jobs:
           
       - name: Begin Sonar scan
         run: |
+          echo ${pwd}
           dotnet tool install --global dotnet-sonarscanner
-          dotnet sonarscanner begin /o:vladimirpetukhov /k:vladimirpetukhov_Musement_CLI/App /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url=https://sonarcloud.io
+          dotnet sonarscanner begin /o:vladimirpetukhov /k:vladimirpetukhov_Musement_CLI /d:sonar.login=${{ secrets.SONAR_TOKEN }} /d:sonar.host.url=https://sonarcloud.io
      
       - name: Build Api 
         run: dotnet build App.sln       
 
       - name: End Sonar scan
-        run: dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }} /k:vladimirpetukhov_Musement_CLI/App
+        run: |
+         cd ./App
+          dotnet sonarscanner end /d:sonar.login=${{ secrets.SONAR_TOKEN }} 
